@@ -21,8 +21,7 @@ args = {
 OptionParser.new do |opt|
   opt.on('--public') { |_| args[:public] = true }
   opt.on('--out FILE') { |v| args[:out] = v }
-
-  opt.parse!(ARGV)
+  opt.parse!
 end
 
 aozora_index = URI.open(AOZORA_INDEX_URL) { |f|
