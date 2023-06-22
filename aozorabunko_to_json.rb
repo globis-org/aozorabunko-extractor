@@ -40,7 +40,7 @@ aozora_index = URI.open(AOZORA_INDEX_URL) { |f|
 File.open(args[:out], 'w') do |f|
   pb = ProgressBar.create total: aozora_index.length,
                           output: STDERR,
-                          format: '%t: |%B|%c/%u|%E|%j%%'
+                          format: '%t: |%B|%c/%u|%j%%|%E'
   aozora_index.each do |row|
     pb.increment
 
@@ -57,15 +57,18 @@ File.open(args[:out], 'w') do |f|
     else
       # aozorabunko_text is sometimes old; get up-to-date text
       text = URI.open(row["テキストファイルURL"]) { |f|
+        ret = nil
         open_method = f.is_a?(StringIO) ? :open_buffer : :open
-        Zip::File.public_send(open_method, f) { |zipfile|
+        Zip::File.public_send(open_method, f) do |zipfile|
           text_entries = zipfile.glob '**/*.[tT][xX][tT]'
           if text_entries.length != 1
             raise ".txt file cannot be identified: #{row["テキストファイルURL"]}"
           end
           entry = text_entries.first
-          entry.get_input_stream.read.force_encoding encoding
-        }
+          raw_text = entry.get_input_stream.read
+          ret = raw_text.force_encoding encoding
+        end
+        ret
       }
     end
 
