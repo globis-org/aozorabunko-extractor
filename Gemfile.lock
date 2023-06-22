@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ruby-progressbar (1.13.0)
+    rubyzip (2.3.2)
+
+PLATFORMS
+  x86_64-darwin-21
+
+DEPENDENCIES
+  ruby-progressbar
+  rubyzip
+
+BUNDLED WITH
+   2.4.10
