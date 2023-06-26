@@ -36,5 +36,7 @@ File.open(args[:out], 'w') do |f|
     else
       STDERR.puts "ignoring #{row['作品ID']}:#{row['作品名']} by #{row['人物ID']}:#{row['姓']}#{row['名']} (#{card_url})"
     end
+
+    STDERR.write "Progress: #{i}\r"
   end
 end
