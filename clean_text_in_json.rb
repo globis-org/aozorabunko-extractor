@@ -176,7 +176,11 @@ File.open(args[:out], 'w') do |f|
     text.gsub!(/｜(.+?)《.+?》/, '\1')
     text.gsub!(/《.+?》/, '')
 
-    # 7. resolve the gaiji-s
+    # 7. replace special charactors
+    text.gsub!(/／＼/, '〳〵')
+    text.gsub!(/／″＼/, '〴〵')
+
+    # 8. resolve the gaiji-s
     text.gsub!(/※［.+?U\+([0-9A-F]+).+?］/) { $1.to_i(16).chr(Encoding::UTF_8) }
     text.gsub!(/※［.+?[準、]([12]-\d{1,3}-\d{1,3})、?.*?］/) { char_from_jis_code $1 }
     if text.match(/※［.+?］/)
@@ -186,7 +190,7 @@ File.open(args[:out], 'w') do |f|
       text.gsub!(/※［＃(.+?)(?:、[^、]*?］|］)/) { "※（#{$1}）" }
     end
 
-    # 8. resolve the accent separations
+    # 9. resolve the accent separations
     if text.match(/〔([^〔〕]+?)〕/)
       text.gsub!(/〔([^〔〕]+?)〕/) { |s|
         count = 0
@@ -198,7 +202,7 @@ File.open(args[:out], 'w') do |f|
       }
     end
 
-    # 9. reformat the inserted notes
+    # 10. reformat the inserted notes
     text.gsub!(/（?［＃割り注］(.+?)［＃割り注終わり］）?/) { |s|
       content = $1.gsub(/［＃改行］/, ' ')
       case [s.start_with?('（'), s.end_with?('）')]
@@ -211,13 +215,13 @@ File.open(args[:out], 'w') do |f|
       end
     }
 
-    # 10. remove the markups
+    # 11. remove the markups
     markup_pattern = /［＃[^［］]+?］/
     while text.match(markup_pattern)
       text.gsub!(markup_pattern, '')
     end
 
-    # 11. remove prefix/suffix newlines and rules
+    # 12. remove prefix/suffix newlines and rules
     text.gsub!(/\A\n+|\n+\z/, '')
     text.gsub!(/\A[-=\n]{8,}|[-=\n]{8,}\z/, '') # not a strict regexp, but I don't care
 
