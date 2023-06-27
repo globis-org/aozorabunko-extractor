@@ -20,7 +20,7 @@ Without `--public` flag, the output will contain non-public-domain or non-CC dat
 
 ### 4. Deduplicate books
 
-It removes all redundant entries with identical text (`テキスト`) field values.
+This removes all redundant entries with identical text (`テキスト`) field values.
 
 ```bash
 bundle exec ./deduplicate_books.rb --in tmp/aozorabunko.json > tmp/aozorabunko-dedupe.json
@@ -28,7 +28,7 @@ bundle exec ./deduplicate_books.rb --in tmp/aozorabunko.json > tmp/aozorabunko-d
 
 ### 5. Clean up texts
 
-It removes markups special to Aozora Bunko in the text (`テキスト`) fields as long as possible.
+This removes Aozora-Bunko-specific markups in the text (`テキスト`) fields as much as possible.
 
 ```bash
 bundle exec ./clean_text_in_json.rb --in tmp/aozorabunko-dedupe.json > tmp/aozorabunko-dedupe-clean.json
