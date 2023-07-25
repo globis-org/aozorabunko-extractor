@@ -72,8 +72,7 @@ File.open(args[:out], 'w') do |f|
       }
     end
 
-    data = row.to_h
-    data['テキスト'] = text
+    data = { text: text, meta: row.to_h }
     json = JSON.dump data
     f.puts json
   end

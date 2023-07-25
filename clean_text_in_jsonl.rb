@@ -116,7 +116,8 @@ end
 File.open(args[:out], 'w') do |f|
   File.foreach(args[:in]).with_index do |line, i|
     row = JSON.load(line)
-    text = row['テキスト']
+    text = row['text']
+    meta = row['meta']
 
     # 1. normalize newline
     text.encode! universal_newline: true
@@ -137,11 +138,11 @@ File.open(args[:out], 'w') do |f|
         text.sub!(headnote_pattern2, '')
       else
         # exceptionally-formatted headnotes which should be removed
-        if %w[044457 024357].include? row['作品ID']
+        if %w[044457 024357].include? meta['作品ID']
           text.sub!(/-+{8,}\n.+?\n-+{8,}\n/m, '')
-        elsif %w[000395].include? row['作品ID']
+        elsif %w[000395].include? meta['作品ID']
           text.sub!(/［収録作品］\n.+?\n=+{8,}\n/m, '')
-        elsif %w[000455].include? row['作品ID']
+        elsif %w[000455].include? meta['作品ID']
           text.sub!(/［表記について］\n.+?\n-+{8,}\n/m, '')
         else
           # FIXME: do it later
@@ -155,19 +156,30 @@ File.open(args[:out], 'w') do |f|
     text.sub!(table_of_contents_pattern, '')
 
     # 5. romove the footnote
+    footnote = nil
+    pull_out_footnote = -> (matched) do
+      footnote = matched
+      ''
+    end
     footnote_pattern = /^底本：.+\z/m
+    footnote_pattern2 = /［＃本文終わり］(.+)\z/m
     if text.match(footnote_pattern)
-      text.sub!(footnote_pattern, '')
-    elsif %w[001871 002526 024456].include? row['作品ID']  # no ：
-      text.sub!(/^底本.+\z/m, '')
-    elsif %w[056033].include? row['作品ID']  # half-width :
-      text.sub!(/^底本:.+\z/m, '')
-    elsif %w[043035].include? row['作品ID']  # a typo
-      text.sub!(/^定本：.+\z/m, '')
-    elsif %w[000395].include? row['作品ID']  # format error
-      text.sub!(/^={8,}底本：.+\z/m, '')
-    elsif %w[000906 000909].include? row['作品ID']  # no 底本
-      text.sub!(/^入力者注.+\z/m, '')
+      text.sub!(footnote_pattern, &pull_out_footnote)
+    elsif text.match(footnote_pattern2)
+      text.sub!(footnote_pattern2) do
+        footnote = $1
+        ''
+      end
+    elsif %w[001871 002526 024456].include? meta['作品ID']  # no ：
+      text.sub!(/^底本.+\z/m, &pull_out_footnote)
+    elsif %w[056033].include? meta['作品ID']  # half-width :
+      text.sub!(/^底本:.+\z/m, &pull_out_footnote)
+    elsif %w[043035].include? meta['作品ID']  # a typo
+      text.sub!(/^定本：.+\z/m, &pull_out_footnote)
+    elsif %w[000395].include? meta['作品ID']  # format error
+      text.sub!(/^={8,}底本：.+\z/m, &pull_out_footnote)
+    elsif %w[000906 000909].include? meta['作品ID']  # no 底本
+      text.sub!(/^入力者注.+\z/m, &pull_out_footnote)
     else
       raise 'No footnote found'
     end
@@ -227,8 +239,8 @@ File.open(args[:out], 'w') do |f|
 
     STDERR.write "Progress: #{i}\r"
 
-    row['テキスト'] = text
-    json = JSON.dump row
+    new_row = { text: text, footnote: footnote, meta: meta }
+    json = JSON.dump new_row
     f.puts json
   end
 end
