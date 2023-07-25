@@ -20,7 +20,7 @@ The `text` field data undergoes cleaning in the following sequence:
 2. Remove headers
 3. Remove footnotes and add them to the `footnote` field
 4. Remove ruby (phonetic guides)
-5. Convert specific characters, such as foreign characters and iteration marks, into standard Unicode characters
+5. Convert specific characters, such as external characters and iteration marks, into standard Unicode characters
 6. Convert inserted notes into regular parenthetical text
 7. Remove any remaining markup
 8. Remove leading and trailing whitespace and horizontal rules
