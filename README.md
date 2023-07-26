@@ -2,6 +2,8 @@
 This repository is dedicated to formatting data from [Aozora Bunko (青空文庫)](https://www.aozora.gr.jp/), a website that compiles public domain books in Japan.
 The data will be converted into a convenient and user-friendly format, making it ideal for Machine Learning applications.
 
+The dataset processed by this code is made available on HuggingFace: [globis-university/aozorabunko-clean](https://huggingface.co/datasets/globis-university/aozorabunko-clean).
+
 ## Methodology 
 
 ### 1. Data collection 
