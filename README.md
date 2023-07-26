@@ -25,7 +25,7 @@ The `text` field data undergoes cleaning in the following sequence:
 5. Convert specific characters, such as external characters and iteration marks, into standard Unicode characters
 6. Convert inserted notes into regular parenthetical text
 7. Remove any remaining markup
-8. Remove leading and trailing whitespace and horizontal rules
+8. Remove leading and trailing new lines and horizontal rules
 
 ## Usage
 
