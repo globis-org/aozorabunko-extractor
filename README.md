@@ -63,7 +63,7 @@ bundle exec ./clean_text_in_jsonl.rb --in tmp/aozorabunko-dedupe.jsonl > tmp/aoz
 
 ### Extra: Exctract chats
 
-This collects chat data with a heuristic approach (just collect consecutive utterances `「...」`).
+This collects chat data using a heuristic approach, specifically by collecting consecutive utterances denoted with `「...」`.
 
 ```bash
 bundle exec ./extract_chats.rb --in tmp/aozorabunko-dedupe-clean.jsonl > tmp/aozorabunko-dedupe-clean-chats.jsonl
