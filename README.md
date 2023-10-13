@@ -61,9 +61,9 @@ This removes Aozora-Bunko-specific markups in the `text` fields as much as possi
 bundle exec ./clean_text_in_jsonl.rb --in tmp/aozorabunko-dedupe.jsonl > tmp/aozorabunko-dedupe-clean.jsonl
 ```
 
-### Extra: Exctract chats
+### Extra: Extract chats
 
-This collects chat data using a heuristic approach, specifically by collecting consecutive utterances denoted with `「...」`.
+This collects chat data using a heuristic approach, specifically by collecting consecutive utterances denoted with brackets as `「...」`.
 
 ```bash
 bundle exec ./extract_chats.rb --in tmp/aozorabunko-dedupe-clean.jsonl > tmp/aozorabunko-dedupe-clean-chats.jsonl
