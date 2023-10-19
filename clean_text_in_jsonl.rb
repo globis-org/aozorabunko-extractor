@@ -184,23 +184,26 @@ File.open(args[:out], 'w') do |f|
       raise 'No footnote found'
     end
 
-    # 6. remove the rubies
+    # 6. reformat the inserted notes
+    text.gsub!(/（?［＃割り注］(.+?)［＃割り注終わり］）?/) { |s|
+      content = $1.gsub(/［＃改行］/, ' ')
+      case [s.start_with?('（'), s.end_with?('）')]
+      when [true, true], [false, false]
+        "（#{content}）"
+      when [true, false]
+        "（（#{content}）"
+      when [false, true]
+        "（#{content}））"
+      end
+    }
+
+    # 7. remove the rubies
     text.gsub!(/｜(.+?)《.+?》/, '\1')
     text.gsub!(/《.+?》/, '')
 
-    # 7. replace special charactors
+    # 8. replace special charactors
     text.gsub!(/／＼/, '〳〵')
     text.gsub!(/／″＼/, '〴〵')
-
-    # 8. resolve the gaiji-s
-    text.gsub!(/※［.+?U\+([0-9A-F]+).+?］/) { $1.to_i(16).chr(Encoding::UTF_8) }
-    text.gsub!(/※［.+?[準、]([12]-\d{1,3}-\d{1,3})、?.*?］/) { char_from_jis_code $1 }
-    if text.match(/※［.+?］/)
-      # when failed, format original expressions like `※（牛＋子）`
-      # remove 「」 if they are redundant with （）
-      text.gsub!(/※［＃「((?:「[^「」]+」|[^「」])+)」(?:、[^、]*?］|］)/) { "※（#{$1}）" }
-      text.gsub!(/※［＃(.+?)(?:、[^、]*?］|］)/) { "※（#{$1}）" }
-    end
 
     # 9. resolve the accent separations
     if text.match(/〔([^〔〕]+?)〕/)
@@ -214,18 +217,15 @@ File.open(args[:out], 'w') do |f|
       }
     end
 
-    # 10. reformat the inserted notes
-    text.gsub!(/（?［＃割り注］(.+?)［＃割り注終わり］）?/) { |s|
-      content = $1.gsub(/［＃改行］/, ' ')
-      case [s.start_with?('（'), s.end_with?('）')]
-      when [true, true], [false, false]
-        "（#{content}）"
-      when [true, false]
-        "（（#{content}）"
-      when [false, true]
-        "（#{content}））"
-      end
-    }
+    # 10. resolve the gaiji-s
+    text.gsub!(/※［.+?U\+([0-9A-F]+).+?］/) { $1.to_i(16).chr(Encoding::UTF_8) }
+    text.gsub!(/※［.+?[準、]([12]-\d{1,3}-\d{1,3})、?.*?］/) { char_from_jis_code $1 }
+    if text.match(/※［.+?］/)
+      # when failed, format original expressions like `※（牛＋子）`
+      # remove 「」 if they are redundant with （）
+      text.gsub!(/※［＃「((?:「[^「」]+」|[^「」])+)」(?:、[^、]*?］|］)/) { "※（#{$1}）" }
+      text.gsub!(/※［＃(.+?)(?:、[^、]*?］|］)/) { "※（#{$1}）" }
+    end
 
     # 11. remove the markups
     markup_pattern = /［＃[^［］]+?］/
