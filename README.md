@@ -4,6 +4,8 @@ The data will be converted into a convenient and user-friendly format, making it
 
 The dataset processed by this code is made available on HuggingFace: [globis-university/aozorabunko-clean](https://huggingface.co/datasets/globis-university/aozorabunko-clean).
 
+[For Japanese] 日本語での概要説明を Qiita に記載しました: https://qiita.com/akeyhero/items/b53eae1c0bc4d54e321f
+
 ## Methodology 
 
 ### 1. Data collection 
